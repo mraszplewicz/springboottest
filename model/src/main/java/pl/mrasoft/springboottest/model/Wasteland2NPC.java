@@ -10,7 +10,7 @@ public class Wasteland2NPC {
     private Long id;
     private String name;
     private String location;
-//    private String test;
+    private String test;
 
     public Wasteland2NPC() {
     }
