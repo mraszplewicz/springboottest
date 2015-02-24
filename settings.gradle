@@ -1,0 +1,1 @@
+include "controlers", "services", "model", "repositories", "tomcatwar", "common:hibernate", "common:liquibase"

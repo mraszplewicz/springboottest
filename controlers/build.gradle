@@ -1,0 +1,25 @@
+buildscript {
+    repositories {
+        maven { url maven_main_repo_url }
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:$spring_boot_version")
+    }
+}
+
+apply plugin: 'spring-boot'
+bootRepackage.enabled = false
+
+configurations {
+    compile.exclude module: "spring-boot-starter-tomcat"
+}
+
+dependencies {
+    compile("org.springframework.boot:spring-boot-starter-web:$spring_boot_version")
+    compile("org.springframework.boot:spring-boot-starter-undertow:$spring_boot_version")
+    compile("org.springframework.boot:spring-boot-starter-data-jpa:$spring_boot_version")
+//    compile("com.microsoft.sqlserver:sqljdbc41:$sqljdbc41_version")
+    compile("org.postgresql:postgresql:$postgresql_driver_version")
+    compile project(":common:hibernate")
+    compile project(":services")
+}

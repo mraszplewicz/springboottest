@@ -1,0 +1,8 @@
+dependencies {
+    compile("com.mysema.querydsl:querydsl-jpa:$querydsl_version")
+    compile("org.hibernate.javax.persistence:hibernate-jpa-2.1-api:$jpa_api_version")
+    compile("org.hibernate:hibernate-core:$hibernate_version")
+}
+
+apply from: "querydsl.gradle"
+apply from: "liquibase.gradle"

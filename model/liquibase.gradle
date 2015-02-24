@@ -1,0 +1,65 @@
+configurations {
+    liquibase
+}
+
+dependencies {
+    liquibase("org.postgresql:postgresql:$postgresql_driver_version")
+//    liquibase("com.microsoft.sqlserver:sqljdbc41:$sqljdbc41_version")
+    liquibase project(":common:liquibase")
+    liquibase project(":common:hibernate")
+}
+
+def changelogMasterPath = "db/liquibase/changelog/changelog-master.xml"
+
+task liquibaseUpdateSQL << {
+    ant.path(id: "classpath") {
+        ant.pathelement(path: configurations.liquibase.asPath)
+    }
+    ant.taskdef(resource: "liquibasetasks.properties", classpathref: "classpath")
+
+    ant.updateDatabase(
+            changeLogFile: changelogMasterPath,
+            outputFile: "$project.buildDir/liquibase_update.sql",
+            classpathref: "classpath"
+    ) {
+        database(
+                driver: liquibase_driver,
+                url: liquibase_url,
+                user: liquibase_user,
+                password: liquibase_password
+        )
+    }
+}
+
+task liquibaseFutureRollbackSQL << {
+    ant.path(id: "classpath") {
+        ant.pathelement(path: configurations.liquibase.asPath)
+    }
+    ant.taskdef(resource: "liquibasetasks.properties", classpathref: "classpath")
+
+    ant.rollbackFutureDatabase(
+            changeLogFile: changelogMasterPath,
+            outputFile: "$project.buildDir/liquibase_rollback.sql",
+            classpathref: "classpath"
+    ) {
+        database(
+                driver: liquibase_driver,
+                url: liquibase_url,
+                user: liquibase_user,
+                password: liquibase_password
+        )
+    }
+}
+
+task liquibaseDiffChangelog(dependsOn: compileJava, type: JavaExec) {
+    classpath sourceSets.main.runtimeClasspath
+    classpath configurations.liquibase
+    main = "liquibase.integration.commandline.Main"
+    args "--changeLogFile=$project.buildDir/changelog-generated.xml"
+    args "--referenceUrl=hibernate:extspring:pl.mrasoft.springboottest.model?dialect=$liquibase_diff_dialect&hibernate.enhanced_id=true"
+    args "--username=$liquibase_diff_user"
+    args "--password=$liquibase_diff_password"
+    args "--url=$liquibase_diff_url"
+    args "--driver=$liquibase_diff_driver"
+    args "diffChangeLog"
+}

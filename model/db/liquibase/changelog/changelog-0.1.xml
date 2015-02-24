@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.3.xsd">
+    <changeSet author="maciek (generated)" id="1424807664109-1">
+        <createSequence sequenceName="Wasteland2NPC_SEQ"/>
+    </changeSet>
+    <changeSet author="maciek (generated)" id="1424807664109-2">
+        <createSequence sequenceName="Wasteland2Weapon_SEQ"/>
+    </changeSet>
+    <changeSet author="maciek (generated)" id="1424807664109-3">
+        <createTable tableName="Wasteland2NPC">
+            <column name="id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="location" type="VARCHAR(255)"/>
+            <column name="name" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="maciek (generated)" id="1424807664109-4">
+        <createTable tableName="Wasteland2Weapon">
+            <column name="id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="name" type="VARCHAR(255)"/>
+            <column name="type" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="maciek (generated)" id="1424807664109-5">
+        <addPrimaryKey columnNames="id" constraintName="Wasteland2NPCPK" tableName="Wasteland2NPC"/>
+    </changeSet>
+    <changeSet author="maciek (generated)" id="1424807664109-6">
+        <addPrimaryKey columnNames="id" constraintName="Wasteland2WeaponPK" tableName="Wasteland2Weapon"/>
+    </changeSet>
+</databaseChangeLog>

@@ -1,0 +1,5 @@
+dependencies {
+    compile("org.springframework:spring-context:$spring_version")
+    compile("org.springframework:spring-tx:$spring_version")
+    compile project(":model")
+}

@@ -1,0 +1,23 @@
+buildscript {
+    repositories {
+        maven { url maven_main_repo_url }
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:$spring_boot_version")
+    }
+}
+
+apply plugin: 'war'
+apply plugin: 'spring-boot'
+
+mainClassName = "pl.mrasoft.springboottest.Application"
+
+configurations {
+    compile.exclude module: "spring-boot-starter-undertow"
+}
+
+dependencies {
+    compile project(":controlers")
+    providedCompile("org.springframework.boot:spring-boot-starter-tomcat:$spring_boot_version")
+}
+
