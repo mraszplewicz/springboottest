@@ -26,7 +26,8 @@ task liquibaseUpdateSQL << {
                 driver: liquibase_driver,
                 url: liquibase_url,
                 user: liquibase_user,
-                password: liquibase_password
+                password: liquibase_password,
+                databaseClass: liquibase_database_class
         )
     }
 }
@@ -46,7 +47,8 @@ task liquibaseFutureRollbackSQL << {
                 driver: liquibase_driver,
                 url: liquibase_url,
                 user: liquibase_user,
-                password: liquibase_password
+                password: liquibase_password,
+                databaseClass: liquibase_database_class
         )
     }
 }
