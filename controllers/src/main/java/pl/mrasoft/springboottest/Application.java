@@ -29,64 +29,28 @@ public class Application {
     }
 
     @Bean
+    @Primary
     @ConfigurationProperties(prefix = "datasource.npc")
-    public ConnectionSettings npcConnectionSettings() {
-        return new ConnectionSettings();
+    public DataSource npcDataSource() {
+        return DataSourceBuilder.create().build();
     }
 
     @Bean
     @ConfigurationProperties(prefix = "datasource.weapon")
-    public ConnectionSettings weaponConnectionSettings() {
-        return new ConnectionSettings();
+    public DataSource weaponDataSource() {
+        return DataSourceBuilder.create().build();
     }
 
     @Bean
     @ConfigurationProperties(prefix = "datasource.npcro")
-    public ConnectionSettings npcConnectionSettingsRO() {
-        return new ConnectionSettings();
+    public DataSource npcDataSourceRO() {
+        return DataSourceBuilder.create().build();
     }
 
     @Bean
     @ConfigurationProperties(prefix = "datasource.weaponro")
-    public ConnectionSettings weaponConnectionSettingsRO() {
-        return new ConnectionSettings();
-    }
-
-    @Bean
-    @Primary
-    public DataSource npcDataSource(@Qualifier("npcConnectionSettings") ConnectionSettings connectionSettings) {
-        return DataSourceBuilder.create()
-                .url(connectionSettings.getUrl())
-                .username(connectionSettings.getUsername())
-                .password(connectionSettings.getPassword())
-                .build();
-    }
-
-    @Bean
-    public DataSource weaponDataSource(@Qualifier("weaponConnectionSettings") ConnectionSettings connectionSettings) {
-        return DataSourceBuilder.create()
-                .url(connectionSettings.getUrl())
-                .username(connectionSettings.getUsername())
-                .password(connectionSettings.getPassword())
-                .build();
-    }
-
-    @Bean
-    public DataSource npcDataSourceRO(@Qualifier("npcConnectionSettingsRO") ConnectionSettings connectionSettings) {
-        return DataSourceBuilder.create()
-                .url(connectionSettings.getUrl())
-                .username(connectionSettings.getUsername())
-                .password(connectionSettings.getPassword())
-                .build();
-    }
-
-    @Bean
-    public DataSource weaponDataSourceRO(@Qualifier("weaponConnectionSettingsRO") ConnectionSettings connectionSettings) {
-        return DataSourceBuilder.create()
-                .url(connectionSettings.getUrl())
-                .username(connectionSettings.getUsername())
-                .password(connectionSettings.getPassword())
-                .build();
+    public DataSource weaponDataSourceRO() {
+        return DataSourceBuilder.create().build();
     }
 
     @Bean
