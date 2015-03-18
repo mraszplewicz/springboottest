@@ -12,7 +12,6 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.transaction.PlatformTransactionManager;
-import pl.mrasoft.springboottest.config.ConnectionSettings;
 import pl.mrasoft.springboottest.model.Wasteland2NPC;
 import pl.mrasoft.springboottest.model.Wasteland2Weapon;
 

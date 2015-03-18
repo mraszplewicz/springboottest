@@ -1,0 +1,69 @@
+import org.apache.tools.ant.taskdefs.condition.Os
+
+buildscript {
+    repositories {
+        maven { url maven_typescript_gradle_plugin_repo_url }
+        maven { url maven_main_repo_url }
+    }
+    dependencies {
+        classpath "de.richsource.gradle.plugins:typescript-gradle-plugin:$typescript_gradle_plugin_version"
+    }
+}
+ext {
+    clientBuildDir = "$project.buildDir/dist"
+}
+
+apply plugin: "typescript"
+
+def tsTmpDir = "$project.buildDir/tstmp"
+def jsDir = clientBuildDir + "/js"
+
+task copyTypeScriptSources(type: Copy) {
+    from "src/main/ts"
+    into tsTmpDir
+}
+
+task tsdInstall(type: Exec) {
+    commandLine = osCmd() + ["tsd", "reinstall"]
+}
+
+task bowerInstall(type: Exec) {
+    commandLine = osCmd() + ["bower", "install"]
+}
+
+task copyTypeScriptLibs(dependsOn: "tsdInstall", type: Copy) {
+    from "extlibs/ts"
+    into tsTmpDir + "/libs"
+}
+
+task copyJavaScriptLibs(dependsOn: "bowerInstall", type: Copy) {
+    from "extlibs/js"
+    into jsDir + "/libs"
+}
+
+compileTypeScript.dependsOn copyTypeScriptLibs, copyTypeScriptSources
+
+compileTypeScript {
+    sourcemap = true
+    source = tsTmpDir
+    target = "ES5"
+    outputDir = file(jsDir)
+}
+
+
+task build(dependsOn: ["compileTypeScript", "copyJavaScriptLibs"], type: Copy) {
+    from "src/main/webapp"
+    into clientBuildDir
+}
+
+task clean(type: Delete) {
+    delete project.buildDir
+}
+
+def osCmd() {
+    if (Os.isFamily(Os.FAMILY_WINDOWS)) {
+        return ["cmd", "/c"]
+    } else {
+        return []
+    }
+}
