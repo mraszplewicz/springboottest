@@ -1,0 +1,15 @@
+{
+  "version": "v4",
+  "repo": "borisyankov/DefinitelyTyped",
+  "ref": "master",
+  "path": "extlibs/ts",
+  "bundle": "extlibs/ts/tsd.d.ts",
+  "installed": {
+    "angularjs/angular.d.ts": {
+      "commit": "7c05f43b86a2b5fb30cd1f67cab942f25294205b"
+    },
+    "jquery/jquery.d.ts": {
+      "commit": "7c05f43b86a2b5fb30cd1f67cab942f25294205b"
+    }
+  }
+}
