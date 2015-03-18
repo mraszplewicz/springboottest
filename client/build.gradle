@@ -17,18 +17,26 @@ apply plugin: "typescript"
 
 def tsTmpDir = "$project.buildDir/tstmp"
 def jsDir = clientBuildDir + "/js"
+def fsep = File.separator
+def npmModulesBinDir = "node_modules" + fsep + ".bin" + fsep
+
+
+task npmInstall(type: Exec) {
+    commandLine = osCmd() + ["npm", "install"]
+} 
+
 
 task copyTypeScriptSources(type: Copy) {
     from "src/main/ts"
     into tsTmpDir
 }
 
-task tsdInstall(type: Exec) {
-    commandLine = osCmd() + ["tsd", "reinstall"]
+task tsdInstall(dependsOn: "npmInstall", type: Exec) {
+    commandLine = osCmd() + [npmModulesBinDir + "tsd", "reinstall"]
 }
 
-task bowerInstall(type: Exec) {
-    commandLine = osCmd() + ["bower", "install"]
+task bowerInstall(dependsOn: "npmInstall", type: Exec) {
+    commandLine = osCmd() + [npmModulesBinDir + "bower", "install"]
 }
 
 task copyTypeScriptLibs(dependsOn: "tsdInstall", type: Copy) {
@@ -48,6 +56,7 @@ compileTypeScript {
     source = tsTmpDir
     target = "ES5"
     outputDir = file(jsDir)
+    compilerExecutable = npmModulesBinDir + "tsc.cmd"
 }
 
 
