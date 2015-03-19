@@ -1,7 +1,21 @@
 /// <reference path='_all.ts' />
 
-module gemStore {
+module wasteland2 {
     'use strict';
 
-    var app = angular.module('gemStore', []);
+    class WeaponController {
+
+        static $inject = ['$http'];
+
+        weapons = []
+
+        constructor(
+            private $http: ng.IHttpService
+            ) {
+            $http.get('./wasteland2/weapons/last/10').success((data) => this.weapons = <any[]>data);
+        }
+    }
+
+    var app = angular.module('app', []);
+    app.controller('WeaponController', WeaponController);
 }
