@@ -3,8 +3,8 @@ configurations {
 }
 
 dependencies {
-//    liquibase("org.postgresql:postgresql:$postgresql_driver_version")
-    liquibase("com.microsoft.sqlserver:sqljdbc41:$sqljdbc41_version")
+    liquibase("org.postgresql:postgresql:$postgresql_driver_version")
+//    liquibase("com.microsoft.sqlserver:sqljdbc41:$sqljdbc41_version")
     liquibase project(":common:liquibase")
     liquibase project(":common:hibernate")
 }

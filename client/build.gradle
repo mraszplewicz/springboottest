@@ -17,14 +17,14 @@ apply plugin: "typescript"
 
 def tsTmpDir = "$project.buildDir/tstmp"
 def jsDir = clientBuildDir + "/js"
-def fsep = File.separator
-def npmModulesBinDir = "node_modules" + fsep + ".bin" + fsep
-
+def separator = File.separator
+def npmModulesBinDir = project.projectDir.toString() + separator + "node_modules" + separator + ".bin" + separator
+def skipInstallClientDependencies = project.hasProperty("skipInstallClientDependencies")
 
 task npmInstall(type: Exec) {
     commandLine = osCmd() + ["npm", "install"]
-} 
-
+    enabled = !skipInstallClientDependencies
+}
 
 task copyTypeScriptSources(type: Copy) {
     from "src/main/ts"
@@ -33,20 +33,24 @@ task copyTypeScriptSources(type: Copy) {
 
 task tsdInstall(dependsOn: "npmInstall", type: Exec) {
     commandLine = osCmd() + [npmModulesBinDir + "tsd", "reinstall"]
+    enabled = !skipInstallClientDependencies
 }
 
 task bowerInstall(dependsOn: "npmInstall", type: Exec) {
     commandLine = osCmd() + [npmModulesBinDir + "bower", "install"]
+    enabled = !skipInstallClientDependencies
 }
 
-task copyTypeScriptLibs(dependsOn: "tsdInstall", type: Copy) {
+task copyTypeScriptLibs(type: Copy) {
     from "extlibs/ts"
     into tsTmpDir + "/libs"
+    dependsOn tsdInstall
 }
 
-task copyJavaScriptLibs(dependsOn: "bowerInstall", type: Copy) {
+task copyJavaScriptLibs(type: Copy) {
     from "extlibs/js"
     into jsDir + "/libs"
+    dependsOn bowerInstall
 }
 
 compileTypeScript.dependsOn copyTypeScriptLibs, copyTypeScriptSources
@@ -56,7 +60,7 @@ compileTypeScript {
     source = tsTmpDir
     target = "ES5"
     outputDir = file(jsDir)
-    compilerExecutable = npmModulesBinDir + "tsc.cmd"
+    compilerExecutable = npmModulesBinDir + "tsc" + tscExecutableSuffix()
 }
 
 
@@ -69,10 +73,22 @@ task clean(type: Delete) {
     delete project.buildDir
 }
 
+def tscExecutableSuffix() {
+    if (isWindows()) {
+        return ".cmd"
+    } else {
+        return ""
+    }
+}
+
 def osCmd() {
-    if (Os.isFamily(Os.FAMILY_WINDOWS)) {
+    if (isWindows()) {
         return ["cmd", "/c"]
     } else {
         return []
     }
+}
+
+def isWindows() {
+    return Os.isFamily(Os.FAMILY_WINDOWS)
 }
