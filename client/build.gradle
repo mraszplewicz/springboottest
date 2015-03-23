@@ -20,6 +20,18 @@ def jsDir = clientBuildDir + "/js"
 def separator = File.separator
 def npmModulesBinDir = project.projectDir.toString() + separator + "node_modules" + separator + ".bin" + separator
 def skipInstallClientDependencies = project.hasProperty("skipInstallClientDependencies")
+def gemsDir = file("extlibs/jruby/gems")
+def sassDir = file("src/main/sass")
+def cssDir = file(clientBuildDir)
+
+
+configurations {
+    jruby
+}
+
+dependencies {
+    jruby "org.jruby:jruby-complete:$jruby_version"
+}
 
 task npmInstall(type: Exec) {
     commandLine = osCmd() + ["npm", "install"]
@@ -63,10 +75,39 @@ compileTypeScript {
     compilerExecutable = npmModulesBinDir + "tsc" + tscExecutableSuffix()
 }
 
+task installGems(type: JavaExec) {
+    outputs.dir gemsDir
 
-task build(dependsOn: ["compileTypeScript", "copyJavaScriptLibs"], type: Copy) {
+    classpath = configurations.jruby
+    main = "org.jruby.Main"
+    args "-S gem install -i $gemsDir --no-rdoc --no-ri compass".tokenize()
+
+    doFirst {
+        gemsDir.mkdirs()
+    }
+    enabled = !skipInstallClientDependencies
+}
+
+task compileSass(type: JavaExec) {
+    outputs.dir cssDir
+    inputs.files installGems
+    inputs.dir sassDir
+
+    classpath = configurations.jruby
+    main = "org.jruby.Main"
+    args "-S compass compile --sass-dir $sassDir --css-dir $cssDir --relative-assets".tokenize()
+    environment "GEM_PATH", gemsDir
+    environment "PATH", "$gemsDir/bin"
+
+    doFirst {
+        cssDir.mkdirs()
+    }
+}
+
+task build(type: Copy) {
     from "src/main/webapp"
     into clientBuildDir
+    dependsOn compileTypeScript, copyJavaScriptLibs, compileSass
 }
 
 task clean(type: Delete) {

@@ -1,12 +1,13 @@
 <!DOCTYPE html>
 <html ng-app="app">
 <head>
-<script type="text/javascript" src="js/libs/angular/angular.min.js"></script>
-<script type="text/javascript" src="js/Application.js"></script>
+    <link rel="stylesheet" type="text/css" href="application.css"/>
+    <script type="text/javascript" src="js/libs/angular/angular.min.js"></script>
+    <script type="text/javascript" src="js/Application.js"></script>
 </head>
 <body ng-controller="WeaponController as weaponCtrl">
-	<div ng-repeat="weapon in weaponCtrl.weapons">
-		{{weapon.id}} {{weapon.name}} {{weapon.type}}
-	</div>
+<div ng-repeat="weapon in weaponCtrl.weapons">
+    {{weapon.id}} {{weapon.name}} {{weapon.type}}
+</div>
 </body>
 </html>
