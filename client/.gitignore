@@ -1,2 +1,5 @@
 extlibs
 node_modules
+.tscache
+.settings
+.project

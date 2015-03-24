@@ -2,134 +2,29 @@ import org.apache.tools.ant.taskdefs.condition.Os
 
 buildscript {
     repositories {
-        maven { url maven_typescript_gradle_plugin_repo_url }
+        maven { url maven_jcenter_repo_url }
         maven { url maven_main_repo_url }
     }
     dependencies {
-        classpath "de.richsource.gradle.plugins:typescript-gradle-plugin:$typescript_gradle_plugin_version"
+        classpath "com.moowork.gradle:gradle-grunt-plugin:$gradle_grunt_plugin_version"
+        classpath "com.moowork.gradle:gradle-node-plugin:$gradle_node_plugin_version"
     }
 }
+
 ext {
     clientBuildDir = "$project.buildDir/dist"
 }
 
-apply plugin: "typescript"
+apply plugin: "com.moowork.grunt"
+apply plugin: "com.moowork.node"
 
-def tsTmpDir = "$project.buildDir/tstmp"
-def jsDir = clientBuildDir + "/js"
-def separator = File.separator
-def npmModulesBinDir = project.projectDir.toString() + separator + "node_modules" + separator + ".bin" + separator
-def skipInstallClientDependencies = project.hasProperty("skipInstallClientDependencies")
-def gemsDir = file("extlibs/jruby/gems")
-def sassDir = file("src/main/sass")
-def cssDir = file(clientBuildDir)
+grunt_build.dependsOn installGrunt
+grunt_build.dependsOn npmInstall
 
-
-configurations {
-    jruby
-}
-
-dependencies {
-    jruby "org.jruby:jruby-complete:$jruby_version"
-}
-
-task npmInstall(type: Exec) {
-    commandLine = osCmd() + ["npm", "install"]
-    enabled = !skipInstallClientDependencies
-}
-
-task copyTypeScriptSources(type: Copy) {
-    from "src/main/ts"
-    into tsTmpDir
-}
-
-task tsdInstall(dependsOn: "npmInstall", type: Exec) {
-    commandLine = osCmd() + [npmModulesBinDir + "tsd", "reinstall"]
-    enabled = !skipInstallClientDependencies
-}
-
-task bowerInstall(dependsOn: "npmInstall", type: Exec) {
-    commandLine = osCmd() + [npmModulesBinDir + "bower", "install"]
-    enabled = !skipInstallClientDependencies
-}
-
-task copyTypeScriptLibs(type: Copy) {
-    from "extlibs/ts"
-    into tsTmpDir + "/libs"
-    dependsOn tsdInstall
-}
-
-task copyJavaScriptLibs(type: Copy) {
-    from "extlibs/js"
-    into jsDir + "/libs"
-    dependsOn bowerInstall
-}
-
-compileTypeScript.dependsOn copyTypeScriptLibs, copyTypeScriptSources
-
-compileTypeScript {
-    sourcemap = true
-    source = tsTmpDir
-    target = "ES5"
-    outputDir = file(jsDir)
-    compilerExecutable = npmModulesBinDir + "tsc" + tscExecutableSuffix()
-}
-
-task installGems(type: JavaExec) {
-    outputs.dir gemsDir
-
-    classpath = configurations.jruby
-    main = "org.jruby.Main"
-    args "-S gem install -i $gemsDir --no-rdoc --no-ri compass".tokenize()
-
-    doFirst {
-        gemsDir.mkdirs()
-    }
-    enabled = !skipInstallClientDependencies
-}
-
-task compileSass(type: JavaExec) {
-    outputs.dir cssDir
-    inputs.files installGems
-    inputs.dir sassDir
-
-    classpath = configurations.jruby
-    main = "org.jruby.Main"
-    args "-S compass compile --sass-dir $sassDir --css-dir $cssDir --relative-assets".tokenize()
-    environment "GEM_PATH", gemsDir
-    environment "PATH", "$gemsDir/bin"
-
-    doFirst {
-        cssDir.mkdirs()
-    }
-}
-
-task build(type: Copy) {
-    from "src/main/webapp"
-    into clientBuildDir
-    dependsOn compileTypeScript, copyJavaScriptLibs, compileSass
+task build {
+    dependsOn grunt_build
 }
 
 task clean(type: Delete) {
     delete project.buildDir
-}
-
-def tscExecutableSuffix() {
-    if (isWindows()) {
-        return ".cmd"
-    } else {
-        return ""
-    }
-}
-
-def osCmd() {
-    if (isWindows()) {
-        return ["cmd", "/c"]
-    } else {
-        return []
-    }
-}
-
-def isWindows() {
-    return Os.isFamily(Os.FAMILY_WINDOWS)
 }
