@@ -18,8 +18,9 @@ ext {
 apply plugin: "com.moowork.grunt"
 apply plugin: "com.moowork.node"
 
-grunt_build.dependsOn installGrunt
-grunt_build.dependsOn npmInstall
+//grunt_build.dependsOn installGrunt
+//grunt_build.dependsOn npmInstall
+grunt_build.enabled=false
 
 task build {
     dependsOn grunt_build

@@ -72,6 +72,11 @@ public class Wasteland2Controller {
         return transformNpcsToDtos(npcs);
     }
 
+    @RequestMapping("/process/starthello")
+    public void startHelloWorldProcess() {
+        wasteland2Service.startHelloWorldProcess();
+    }
+
     private Wasteland2Weapon[] transformWeaponsToDtos(List<pl.mrasoft.springboottest.model.Wasteland2Weapon> weapons) {
         Wasteland2Weapon[] weaponDtos = weapons.stream()
                 .map(w -> new Wasteland2Weapon(w.getId(), w.getName(), w.getType()))

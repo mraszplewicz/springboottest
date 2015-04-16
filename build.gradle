@@ -1,6 +1,7 @@
 subprojects {
     repositories {
         maven { url maven_main_repo_url }
+        maven { url maven_jboss_repo_url }
     }
 
 }

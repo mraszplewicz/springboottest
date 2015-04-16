@@ -1,0 +1,17 @@
+import org.drools.core.process.core.datatype.impl.type.StringDataType;
+import org.drools.core.process.core.datatype.impl.type.ObjectDataType;
+
+[
+  [
+    "name" : "asyncSpring",
+    "parameters" : [
+         "BeanName" : new StringDataType()
+    ],
+    "results" : [
+        "Result" : new ObjectDataType(),
+    ],
+    "displayName" : "AsyncSpring",
+    "icon" : "defaultservicenodeicon.png"
+  ]
+
+]

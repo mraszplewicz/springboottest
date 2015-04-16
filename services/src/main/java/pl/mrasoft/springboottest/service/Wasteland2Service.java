@@ -1,7 +1,15 @@
 package pl.mrasoft.springboottest.service;
 
+import org.jbpm.executor.ExecutorServiceFactory;
+import org.jbpm.executor.impl.wih.AsyncWorkItemHandler;
+import org.kie.api.runtime.KieSession;
+import org.kie.api.runtime.manager.RuntimeEngine;
+import org.kie.api.runtime.manager.RuntimeManager;
+import org.kie.internal.executor.api.ExecutorService;
+import org.kie.internal.runtime.manager.context.EmptyContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import pl.mrasoft.springboottest.jbmp.ProcessService;
 import pl.mrasoft.springboottest.model.Wasteland2NPC;
 import pl.mrasoft.springboottest.model.Wasteland2Weapon;
 import pl.mrasoft.springboottest.repository.Wasteland2NpcRepository;
@@ -15,6 +23,10 @@ import java.util.List;
 
 @Service
 public class Wasteland2Service {
+
+    @Autowired
+    private ProcessService processService;
+
 
     @Autowired
     private Wasteland2NpcRepository npcRepository;
@@ -52,6 +64,10 @@ public class Wasteland2Service {
     public List<Wasteland2NPC> addNpcAndFindLast(Wasteland2NPC npc, long limit) {
         addNPC(npc);
         return npcRepository.findAllWithPagesRW(0, limit);
+    }
+
+    public void startHelloWorldProcess() {
+        processService.startProcess("defaultPackage.sample");
     }
 
 }

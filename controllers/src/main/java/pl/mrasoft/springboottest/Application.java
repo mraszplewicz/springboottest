@@ -8,6 +8,7 @@ import org.springframework.boot.autoconfigure.orm.jpa.EntityManagerFactoryBuilde
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.ImportResource;
 import org.springframework.context.annotation.Primary;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
@@ -33,6 +34,7 @@ public class Application {
     public DataSource npcDataSource() {
         return DataSourceBuilder.create().build();
     }
+
 
     @Bean
     @ConfigurationProperties(prefix = "datasource.weapon")

@@ -1,0 +1,19 @@
+dependencies {
+    compile("org.springframework:spring-context:$spring_version")
+    compile("org.springframework.boot:spring-boot:$spring_boot_version")
+    compile("org.springframework.boot:spring-boot-starter-data-jpa:$spring_boot_version")
+
+    compile("org.drools:drools-bom:$jbpm_version")
+    compile("org.jbpm:jbpm-bom:$jbpm_version")
+    compile("org.jbpm:jbpm-flow:$jbpm_version")
+    compile("org.jbpm:jbpm-flow-builder:$jbpm_version")
+    compile("org.jbpm:jbpm-bpmn2:$jbpm_version")
+    compile("org.jbpm:jbpm-persistence-jpa:$jbpm_version")
+    compile("org.jbpm:jbpm-runtime-manager:$jbpm_version")
+    compile("org.kie:kie-spring:$jbpm_version")
+    compile("org.jbpm:jbpm-executor:$jbpm_version")
+    compile("org.jbpm:jbpm-shared-services:$jbpm_version")
+//    compile("org.codehaus.btm:btm:$bitronix_version")
+
+//    compile("org.kie:kie-api:$jbpm_version")
+}

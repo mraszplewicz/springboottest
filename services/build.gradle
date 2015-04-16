@@ -1,4 +1,5 @@
 dependencies {
     compile("org.springframework:spring-context:$spring_version")
     compile project(":repositories")
+    compile project(":processes")
 }
