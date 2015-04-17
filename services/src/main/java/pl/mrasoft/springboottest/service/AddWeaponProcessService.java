@@ -5,18 +5,20 @@ import org.kie.internal.executor.api.CommandContext;
 import org.kie.internal.executor.api.ExecutionResults;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import pl.mrasoft.springboottest.model.Wasteland2NPC;
+import pl.mrasoft.springboottest.model.Wasteland2Weapon;
+import pl.mrasoft.springboottest.repository.transaction.annotation.WeaponTx;
 
 @Service
-public class HelloProcessService implements Command {
+public class AddWeaponProcessService implements Command {
     @Autowired
     private Wasteland2Service wasteland2Service;
 
     @Override
+    @WeaponTx
     public ExecutionResults execute(CommandContext ctx) throws Exception {
 
-        Wasteland2NPC npc = new Wasteland2NPC("name from jbpm", "location from jbpm");
-        wasteland2Service.addNPC(npc);
+        Wasteland2Weapon weapon = new Wasteland2Weapon("name from jbpm", "type from jbpm");
+        wasteland2Service.addWeapon(weapon);
 
         return null;
     }

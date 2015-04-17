@@ -66,7 +66,7 @@ public class Wasteland2Service {
         return npcRepository.findAllWithPagesRW(0, limit);
     }
 
-    public void startHelloWorldProcess() {
+    public void startAddNpcAndWeaponProcess() {
         processService.startProcess("defaultPackage.sample");
     }
 

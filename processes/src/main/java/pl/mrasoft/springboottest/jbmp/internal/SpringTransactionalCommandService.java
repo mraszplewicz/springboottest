@@ -11,18 +11,18 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.support.AbstractPlatformTransactionManager;
 
-import javax.persistence.EntityManagerFactory;
+import javax.persistence.EntityManager;
 
 public class SpringTransactionalCommandService implements CommandService {
 
     private static final Logger logger = LoggerFactory.getLogger(SpringTransactionalCommandService.class);
 
-    private EntityManagerFactory emf;
+    private EntityManager em;
     private Context context;
     private TransactionManager txm;
 
-    public SpringTransactionalCommandService(EntityManagerFactory emf, AbstractPlatformTransactionManager transactionManager) {
-        this.emf = emf;
+    public SpringTransactionalCommandService(EntityManager em, AbstractPlatformTransactionManager transactionManager) {
+        this.em = em;
         this.txm = new KieSpringTransactionManager(transactionManager);
     }
 
@@ -30,8 +30,8 @@ public class SpringTransactionalCommandService implements CommandService {
         return context;
     }
 
-    protected void setEmf(EntityManagerFactory emf) {
-        this.emf = emf;
+    protected void setEm(EntityManager em) {
+        this.em = em;
     }
 
     public <T> T execute(Command<T> command) {
@@ -40,8 +40,8 @@ public class SpringTransactionalCommandService implements CommandService {
 
         try {
             transactionOwner = txm.begin();
-            JpaPersistenceContext context = new JpaPersistenceContext(emf.createEntityManager());
-            context.joinTransaction();
+            JpaPersistenceContext context = new JpaPersistenceContext(em);
+
             result = ((GenericCommand<T>) command).execute(context);
             txm.commit(transactionOwner);
             context.close(transactionOwner);

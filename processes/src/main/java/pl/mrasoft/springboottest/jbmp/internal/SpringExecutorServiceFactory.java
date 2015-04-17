@@ -8,7 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.support.AbstractPlatformTransactionManager;
 
-import javax.persistence.EntityManagerFactory;
+import javax.persistence.EntityManager;
 
 public class SpringExecutorServiceFactory {
 
@@ -16,9 +16,9 @@ public class SpringExecutorServiceFactory {
 
     private static ExecutorService serviceInstance;
 
-    public static synchronized ExecutorService newExecutorService(EntityManagerFactory emf, AbstractPlatformTransactionManager transactionManager) {
+    public static synchronized ExecutorService newExecutorService(EntityManager em, AbstractPlatformTransactionManager transactionManager) {
         if (serviceInstance == null) {
-            serviceInstance = configure(emf, transactionManager);
+            serviceInstance = configure(em, transactionManager);
         }
         return serviceInstance;
     }
@@ -29,7 +29,7 @@ public class SpringExecutorServiceFactory {
         }
     }
 
-    private static ExecutorService configure(EntityManagerFactory emf, AbstractPlatformTransactionManager transactionManager) {
+    private static ExecutorService configure(EntityManager em, AbstractPlatformTransactionManager transactionManager) {
 
         // create instances of executor services
 
@@ -38,11 +38,11 @@ public class SpringExecutorServiceFactory {
         ExecutorAdminService adminService = new ExecutorRequestAdminServiceImpl();
 
         // create executor for persistence handling
-        SpringTransactionalCommandService commandService = new SpringTransactionalCommandService(emf, transactionManager);
+        SpringTransactionalCommandService commandService = new SpringTransactionalCommandService(em, transactionManager);
 
         ExecutorStoreService storeService = new SpringJPAExecutorStoreService(true);
         ((SpringJPAExecutorStoreService) storeService).setCommandService(commandService);
-        ((SpringJPAExecutorStoreService) storeService).setEmf(emf);
+        ((SpringJPAExecutorStoreService) storeService).setEm(em);
         ((SpringJPAExecutorStoreService) storeService).setTransactionManager(transactionManager);
 
         ((ExecutorImpl) executor).setExecutorStoreService(storeService);
@@ -63,26 +63,26 @@ public class SpringExecutorServiceFactory {
     }
 
 
-    public static ExecutorRunnable buildRunable(EntityManagerFactory emf, AbstractPlatformTransactionManager transactionManager) {
+    public static ExecutorRunnable buildRunable(EntityManager em, AbstractPlatformTransactionManager transactionManager) {
         ExecutorRunnable runnable = new ExecutorRunnable();
         AvailableJobsExecutor jobExecutor = null;
 
-        jobExecutor = buildJobExecutor(emf, transactionManager);
+        jobExecutor = buildJobExecutor(em, transactionManager);
         runnable.setAvailableJobsExecutor(jobExecutor);
         return runnable;
     }
 
 
-    private static AvailableJobsExecutor buildJobExecutor(EntityManagerFactory emf, AbstractPlatformTransactionManager transactionManager) {
+    private static AvailableJobsExecutor buildJobExecutor(EntityManager em, AbstractPlatformTransactionManager transactionManager) {
         AvailableJobsExecutor jobExecutor;
         jobExecutor = new AvailableJobsExecutor();
         ClassCacheManager classCacheManager = new ClassCacheManager();
         ExecutorQueryService queryService = new ExecutorQueryServiceImpl(true);
 
-        SpringTransactionalCommandService cmdService = new SpringTransactionalCommandService(emf, transactionManager);
+        SpringTransactionalCommandService cmdService = new SpringTransactionalCommandService(em, transactionManager);
         ExecutorStoreService storeService = new SpringJPAExecutorStoreService(true);
         ((SpringJPAExecutorStoreService) storeService).setCommandService(cmdService);
-        ((SpringJPAExecutorStoreService) storeService).setEmf(emf);
+        ((SpringJPAExecutorStoreService) storeService).setEm(em);
         ((SpringJPAExecutorStoreService) storeService).setTransactionManager(transactionManager);
 
         ((ExecutorQueryServiceImpl) queryService).setCommandService(cmdService);

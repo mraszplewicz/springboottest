@@ -9,6 +9,7 @@ import org.kie.internal.executor.api.ExecutorService;
 import org.kie.internal.runtime.manager.context.EmptyContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import pl.mrasoft.springboottest.jbmp.internal.SpringAsyncWorkItemHandler;
 import pl.mrasoft.springboottest.jbmp.internal.SpringCommand;
 
@@ -19,28 +20,26 @@ public class ProcessService {
 
     @Autowired
     private RuntimeManager runtimeManager;
-    @Autowired
-    private ExecutorService executorService;
 
+    @Transactional("jbpmTransactionManager")
     public ProcessInstance startProcess(String processId) {
+
         return getKieSession().startProcess(processId);
     }
 
+    @Transactional("jbpmTransactionManager")
     public ProcessInstance startProcess(String processId,
                                         Map<String, Object> parameters) {
+
         return getKieSession().startProcess(processId, parameters);
     }
 
     private KieSession getKieSession() {
         RuntimeEngine runtimeEngine = runtimeManager.getRuntimeEngine(EmptyContext.get());
         KieSession ksession = runtimeEngine.getKieSession();
-        registerHandlers(ksession.getWorkItemManager());
 
         return ksession;
     }
 
-    private void registerHandlers(WorkItemManager workItemManager) {
-        workItemManager.registerWorkItemHandler(SpringCommand.NAME, new SpringAsyncWorkItemHandler(executorService));
-    }
 
 }
