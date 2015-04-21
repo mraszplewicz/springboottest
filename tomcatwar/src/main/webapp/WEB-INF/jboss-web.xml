@@ -1,0 +1,8 @@
+<jboss-web>
+    <context-root>springboottest</context-root>
+    <resource-ref>
+        <res-ref-name>spring.config.location</res-ref-name>
+        <res-type>java.lang.String</res-type>
+        <jndi-name>java:/springboottest/ConfigLocation</jndi-name>
+    </resource-ref>
+</jboss-web>

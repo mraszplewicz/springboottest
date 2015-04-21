@@ -13,7 +13,12 @@ dependencies {
     compile("org.kie:kie-spring:$jbpm_version")
     compile("org.jbpm:jbpm-executor:$jbpm_version")
     compile("org.jbpm:jbpm-shared-services:$jbpm_version")
+
 //    compile("org.codehaus.btm:btm:$bitronix_version")
 
 //    compile("org.kie:kie-api:$jbpm_version")
+}
+
+configurations {
+    compile.exclude group: "org.hibernate.javax.persistence", module: "hibernate-jpa-2.0-api"
 }

@@ -21,6 +21,10 @@ apply plugin: "com.moowork.node"
 grunt_build.dependsOn installGrunt
 grunt_build.dependsOn npmInstall
 
+grunt_build.enabled = !project.hasProperty("skipGrunt")
+installGrunt.enabled = !project.hasProperty("skipGrunt")
+npmInstall.enabled = !project.hasProperty("skipGrunt")
+
 task build {
     dependsOn grunt_build
 }
