@@ -1,7 +1,6 @@
 package pl.mrasoft.springboottest.jbmp.internal;
 
 import org.jbpm.executor.impl.*;
-import org.jbpm.executor.impl.jpa.ExecutorQueryServiceImpl;
 import org.jbpm.executor.impl.jpa.ExecutorRequestAdminServiceImpl;
 import org.kie.internal.executor.api.*;
 import org.slf4j.Logger;
@@ -33,7 +32,7 @@ public class SpringExecutorServiceFactory {
 
         // create instances of executor services
 
-        ExecutorQueryService queryService = new ExecutorQueryServiceImpl(true);
+        ExecutorQueryService queryService = new CustomExecutorQueryService(em, true);
         Executor executor = new ExecutorImpl();
         ExecutorAdminService adminService = new ExecutorRequestAdminServiceImpl();
 
@@ -48,7 +47,7 @@ public class SpringExecutorServiceFactory {
         ((ExecutorImpl) executor).setExecutorStoreService(storeService);
 
         // set executor on all instances that requires it
-        ((ExecutorQueryServiceImpl) queryService).setCommandService(commandService);
+        ((CustomExecutorQueryService) queryService).setCommandService(commandService);
         ((ExecutorRequestAdminServiceImpl) adminService).setCommandService(commandService);
 
 
@@ -77,7 +76,7 @@ public class SpringExecutorServiceFactory {
         AvailableJobsExecutor jobExecutor;
         jobExecutor = new AvailableJobsExecutor();
         ClassCacheManager classCacheManager = new ClassCacheManager();
-        ExecutorQueryService queryService = new ExecutorQueryServiceImpl(true);
+        ExecutorQueryService queryService = new CustomExecutorQueryService(em, true);
 
         SpringTransactionalCommandService cmdService = new SpringTransactionalCommandService(em, transactionManager);
         ExecutorStoreService storeService = new SpringJPAExecutorStoreService(true);
@@ -85,7 +84,7 @@ public class SpringExecutorServiceFactory {
         ((SpringJPAExecutorStoreService) storeService).setEm(em);
         ((SpringJPAExecutorStoreService) storeService).setTransactionManager(transactionManager);
 
-        ((ExecutorQueryServiceImpl) queryService).setCommandService(cmdService);
+        ((CustomExecutorQueryService) queryService).setCommandService(cmdService);
         jobExecutor.setClassCacheManager(classCacheManager);
         jobExecutor.setQueryService(queryService);
         jobExecutor.setExecutorStoreService(storeService);

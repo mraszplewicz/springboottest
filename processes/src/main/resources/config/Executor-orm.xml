@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entity-mappings xmlns="http://java.sun.com/xml/ns/persistence/orm"
+                 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                 xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm orm_2_0.xsd"
+                 version="2.0">
+    <named-query name="PendingRequests">
+        <query>
+            Select r from RequestInfo as r where (r.status ='QUEUED' or r.status = 'RETRYING') and r.time &lt; :now ORDER BY r.time DESC
+        </query>
+    </named-query>
+    <named-query name="PendingRequestById">
+        <query>
+            Select r from RequestInfo as r where (r.status ='QUEUED' or r.status ='RETRYING') and id = :id
+        </query>
+    </named-query>
+    <named-query name="RunningRequests">
+        <query>
+            Select r from RequestInfo as r where r.status ='RUNNING'
+        </query>
+    </named-query>
+    <named-query name="QueuedRequests">
+        <query>
+            Select r from RequestInfo as r where r.status ='QUEUED'
+        </query>
+    </named-query>
+    <named-query name="FutureQueuedRequests">
+        <query>
+            Select r from RequestInfo as r where r.status ='QUEUED' and r.time &gt; :now ORDER BY r.time ASC
+        </query>
+    </named-query>
+    <named-query name="CompletedRequests">
+        <query>
+            Select r from RequestInfo as r where r.status ='DONE'
+        </query>
+    </named-query>
+
+    <named-query name="InErrorRequests">
+        <query>
+            Select r from RequestInfo as r where r.status ='ERROR'
+        </query>
+    </named-query>
+
+    <named-query name="CancelledRequests">
+        <query>
+            Select r from RequestInfo as r where r.status ='CANCELLED'
+        </query>
+    </named-query>
+
+    <named-query name="GetAllRequests">
+        <query>
+            Select r from RequestInfo as r
+        </query>
+    </named-query>
+
+    <named-query name="GetAllErrors">
+        <query>
+            Select e from ErrorInfo as e
+        </query>
+    </named-query>
+
+    <named-query name="GetErrorsByRequestId">
+        <query>
+            Select e from ErrorInfo as e where e.requestInfo.id = :id
+        </query>
+    </named-query>
+
+    <named-query name="GetRequestsByStatus">
+        <query>
+            Select r from RequestInfo as r where r.status in (:statuses) ORDER BY r.time DESC
+        </query>
+    </named-query>
+
+    <named-query name="GetRequestsByBusinessKey">
+        <query>
+            Select r from RequestInfo as r where r.key = :businessKey
+        </query>
+    </named-query>
+    <named-native-query name="PendingRequestsForProcessing"
+                        result-class="org.jbpm.executor.entities.RequestInfo">
+        <query>
+            select ri3.id,
+                ri3.commandname,
+                ri3.deploymentid,
+                ri3.executions,
+                ri3.businesskey,
+                ri3.message,
+                ri3.owner,
+                ri3.requestdata,
+                ri3.responsedata,
+                ri3.retries,
+                ri3.status,
+                ri3.timestamp
+            from RequestInfo ri3
+            join (
+                select ri1.id,
+                    cast(left(ri1.businesskey, position(':' in ri1.businesskey) - 1) as bigint) processInstanceId
+                from RequestInfo ri1
+                where (ri1.status = 'QUEUED' or ri1.status = 'RETRYING')
+                and ri1.timestamp &lt; :now
+                and (ri1.owner = :owner or ri1.owner is null)
+                and not exists (
+                    select ri2.id
+                    from RequestInfo ri2
+                    where ri2.status = 'RUNNING'
+                    and cast(left(ri2.businesskey, position(':' in ri2.businesskey) - 1) as bigint) = cast(left(ri1.businesskey, position(':' in ri1.businesskey) - 1) as bigint)
+                )
+                limit 1
+            ) ri4 on ri4.processInstanceId = cast(left(ri3.businesskey, position(':' in ri3.businesskey) - 1) as bigint)
+            for update
+        </query>
+    </named-native-query>
+</entity-mappings>
