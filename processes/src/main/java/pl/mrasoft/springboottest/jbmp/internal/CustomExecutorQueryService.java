@@ -56,7 +56,17 @@ public class CustomExecutorQueryService extends org.jbpm.executor.impl.jpa.Execu
             try {
                 CustomJpaPersistenceContext ctx = new CustomJpaPersistenceContext(em);
                 List<RequestInfo> requestList = ctx.queryAndLockWithParametersInTransaction("PendingRequestsForProcessing", params, RequestInfo.class);
-                request = requestList.get(0);
+                if(requestList.size() > 0) {
+                    request = requestList.get(0);
+                }
+                //if at least one request info is running then skip all
+                //TODO optimization - should retry if this loop breaks
+                for(RequestInfo requestListElement : requestList) {
+                    if(requestListElement.getStatus().equals(STATUS.RUNNING)) {
+                        request = null;
+                        break;
+                    }
+                }
                 if (request != null) {
                     request.setStatus(STATUS.RUNNING);
                     // update date on when it was started to be executed

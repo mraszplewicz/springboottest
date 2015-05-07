@@ -95,18 +95,27 @@
                 select ri1.id,
                     cast(left(ri1.businesskey, position(':' in ri1.businesskey) - 1) as bigint) processInstanceId
                 from RequestInfo ri1
-                where (ri1.status = 'QUEUED' or ri1.status = 'RETRYING')
+                where ri1.status in ('QUEUED', 'RETRYING')
                 and ri1.timestamp &lt; :now
                 and (ri1.owner = :owner or ri1.owner is null)
                 and not exists (
-                    select ri2.id
+                    select cast(left(ri2.businesskey, position(':' in ri2.businesskey) - 1) as bigint)
                     from RequestInfo ri2
                     where ri2.status = 'RUNNING'
                     and cast(left(ri2.businesskey, position(':' in ri2.businesskey) - 1) as bigint) = cast(left(ri1.businesskey, position(':' in ri1.businesskey) - 1) as bigint)
                 )
                 limit 1
             ) ri4 on ri4.processInstanceId = cast(left(ri3.businesskey, position(':' in ri3.businesskey) - 1) as bigint)
-            for update
+            where ri3.status &lt;&gt; 'DONE'
+            order by
+                case
+                    when ri3.status in ('QUEUED', 'RETRYING')
+                        and ri3.timestamp &lt; :now
+                        and (ri3.owner = :owner or ri3.owner is null)
+                        then 0
+                    else 1
+                end
+            for update of ri3
         </query>
     </named-native-query>
 </entity-mappings>
