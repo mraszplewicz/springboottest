@@ -43,7 +43,7 @@ public class SpringAsyncWorkItemHandler implements WorkItemHandler {
         ctxCMD.setData("workItem", workItem);
         ctxCMD.setData("processInstanceId", getProcessInstanceId(workItem));
         ctxCMD.setData("deploymentId", ((WorkItemImpl)workItem).getDeploymentId());
-        ctxCMD.setData("callbacks", AsyncWorkItemHandlerCmdCallback.class.getName());
+        ctxCMD.setData("callbacks", LockingAsyncWorkItemHandlerCmdCallback.class.getName());
         if (workItem.getParameter("Retries") != null) {
             ctxCMD.setData("retries", Integer.parseInt(workItem.getParameter("Retries").toString()));
         }

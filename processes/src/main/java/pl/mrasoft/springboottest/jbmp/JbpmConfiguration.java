@@ -93,6 +93,7 @@ public class JbpmConfiguration {
         Map<Resource, ResourceType> assets = new HashMap<>();
         assets.put(resource, ResourceType.BPMN2);
         factory.setAssets(assets);
+//        factory.setPessimisticLocking(true);
 
         return (RuntimeEnvironment) factory.getObject();
     }
