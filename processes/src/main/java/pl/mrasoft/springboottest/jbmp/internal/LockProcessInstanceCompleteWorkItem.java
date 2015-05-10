@@ -12,7 +12,6 @@ import javax.persistence.LockModeType;
 import javax.persistence.PersistenceContext;
 
 @Component
-//@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class LockProcessInstanceCompleteWorkItem {
 
     @PersistenceContext(unitName = "org.jbpm.persistence.spring.local")
