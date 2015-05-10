@@ -20,6 +20,7 @@ public class AddWeaponProcessService implements Command {
         Wasteland2Weapon weapon = new Wasteland2Weapon("name from jbpm", "type from jbpm");
         wasteland2Service.addWeapon(weapon);
 
+//        throw new RuntimeException("Exception from while adding Wasteland2Weapon!");
         return null;
     }
 }

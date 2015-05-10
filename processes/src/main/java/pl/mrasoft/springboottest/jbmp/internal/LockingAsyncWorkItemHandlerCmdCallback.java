@@ -37,9 +37,9 @@ public class LockingAsyncWorkItemHandlerCmdCallback implements CommandCallback {
         RuntimeManager manager = getRuntimeManager(ctx);
         RuntimeEngine engine = manager.getRuntimeEngine(ProcessInstanceIdContext.get((Long) ctx.getData("processInstanceId")));
         try {
-            LockProcessInstanceCompleteWorkItem lockProcessInstanceCompleteWorkItem =
-                    ApplicationContextProvider.getApplicationContext().getBean(LockProcessInstanceCompleteWorkItem.class);
-            lockProcessInstanceCompleteWorkItem.completeWorkItem(engine, workItem, results);
+            LockProcessInstanceCommandEnd lockProcessInstanceCommandEnd =
+                    ApplicationContextProvider.getApplicationContext().getBean(LockProcessInstanceCommandEnd.class);
+            lockProcessInstanceCommandEnd.completeWorkItem(engine, workItem, results);
         } finally {
             manager.disposeRuntimeEngine(engine);
         }
@@ -65,6 +65,10 @@ public class LockingAsyncWorkItemHandlerCmdCallback implements CommandCallback {
 
                 @Override
                 public Void execute(Context context) {
+                    LockProcessInstanceCommandEnd lockProcessInstanceCommandEnd =
+                            ApplicationContextProvider.getApplicationContext().getBean(LockProcessInstanceCommandEnd.class);
+                    lockProcessInstanceCommandEnd.lockProcessInstance(processInstanceId);
+
                     KieSession ksession = ((KnowledgeCommandContext) context).getKieSession();
                     WorkflowProcessInstance processInstance = (WorkflowProcessInstance) ksession.getProcessInstance(processInstanceId);
                     NodeInstance nodeInstance = getNodeInstance(workItem, processInstance);

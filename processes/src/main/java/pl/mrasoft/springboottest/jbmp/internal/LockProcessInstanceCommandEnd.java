@@ -12,7 +12,7 @@ import javax.persistence.LockModeType;
 import javax.persistence.PersistenceContext;
 
 @Component
-public class LockProcessInstanceCompleteWorkItem {
+public class LockProcessInstanceCommandEnd {
 
     @PersistenceContext(unitName = "org.jbpm.persistence.spring.local")
     private EntityManager em;
@@ -20,9 +20,14 @@ public class LockProcessInstanceCompleteWorkItem {
     @Transactional("jbpmTransactionManager")
     public void completeWorkItem(RuntimeEngine engine, WorkItem workItem, ExecutionResults results) {
 
-        em.find(ProcessInstanceInfo.class, workItem.getProcessInstanceId(), LockModeType.PESSIMISTIC_WRITE);
+        lockProcessInstance(workItem.getProcessInstanceId());
 
         engine.getKieSession().getWorkItemManager().completeWorkItem(workItem.getId(), results.getData());
+    }
+
+    @Transactional("jbpmTransactionManager")
+    public void lockProcessInstance(long processInstanceId) {
+        em.find(ProcessInstanceInfo.class, processInstanceId, LockModeType.PESSIMISTIC_WRITE);
     }
 
 }

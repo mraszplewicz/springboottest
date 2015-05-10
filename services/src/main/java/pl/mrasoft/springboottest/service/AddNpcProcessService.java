@@ -20,6 +20,7 @@ public class AddNpcProcessService implements Command {
         Wasteland2NPC npc = new Wasteland2NPC("name from jbpm", "location from jbpm");
         wasteland2Service.addNPC(npc);
 
+//        throw new RuntimeException("Exception from while adding Wasteland2NPC!");
         return null;
     }
 }
