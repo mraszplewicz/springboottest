@@ -21,6 +21,7 @@ import javax.sql.DataSource;
 public class Application {
 
     public static void main(String[] args) {
+        System.setProperty("org.kie.optlock.exclass", "org.springframework.transaction.IllegalTransactionStateException");
 
         SpringApplication.run(Application.class, args);
     }
