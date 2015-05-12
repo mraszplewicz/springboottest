@@ -22,7 +22,6 @@ public class AddNpcProcessService implements Command {
     public ExecutionResults execute(CommandContext ctx) throws Exception {
         logger.info("Executing AddNpcProcessService.execute");
 
-//        Thread.sleep(3000);
         Wasteland2NPC npc = new Wasteland2NPC("name from jbpm", "location from jbpm");
         wasteland2Service.addNPC(npc);
 

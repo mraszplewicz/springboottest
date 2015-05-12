@@ -22,7 +22,6 @@ public class AddWeaponProcessService implements Command {
     public ExecutionResults execute(CommandContext ctx) throws Exception {
         logger.info("Executing AddWeaponProcessService.execute");
 
-//        Thread.sleep(3000);
         Wasteland2Weapon weapon = new Wasteland2Weapon("name from jbpm", "type from jbpm");
         wasteland2Service.addWeapon(weapon);
 
