@@ -14,10 +14,10 @@ configurations {
     compile.exclude module: "spring-boot-starter-tomcat"
 }
 
-processResources{
-    dependsOn ":client:build"
-    from project(":client").clientBuildDir
-}
+//processResources{
+//    dependsOn ":client:build"
+//    from project(":client").clientBuildDir
+//}
 
 dependencies {
     compile("org.springframework.boot:spring-boot-starter-web:$spring_boot_version")

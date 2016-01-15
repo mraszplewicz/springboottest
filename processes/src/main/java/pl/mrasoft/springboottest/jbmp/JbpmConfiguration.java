@@ -1,34 +1,42 @@
 package pl.mrasoft.springboottest.jbmp;
 
+import org.jbpm.process.core.timer.GlobalSchedulerService;
+import org.kie.api.executor.ExecutorService;
 import org.kie.api.io.Resource;
 import org.kie.api.io.ResourceType;
 import org.kie.api.runtime.manager.RuntimeEnvironment;
 import org.kie.api.runtime.manager.RuntimeManager;
-import org.kie.internal.executor.api.ExecutorService;
 import org.kie.internal.io.ResourceFactory;
 import org.kie.spring.factorybeans.RuntimeEnvironmentFactoryBean;
 import org.kie.spring.factorybeans.RuntimeManagerFactoryBean;
+import org.quartz.Scheduler;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.config.PropertiesFactoryBean;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceBuilder;
-import org.springframework.boot.autoconfigure.orm.jpa.EntityManagerFactoryBuilder;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.orm.jpa.EntityManagerFactoryBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.support.SharedEntityManagerBean;
+import org.springframework.scheduling.quartz.SchedulerFactoryBean;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.AbstractPlatformTransactionManager;
 import pl.mrasoft.springboottest.jbmp.internal.SpringExecutorServiceFactory;
+import pl.mrasoft.springboottest.jbmp.internal.SpringQuartzSchedulerService;
 import pl.mrasoft.springboottest.jbmp.internal.SpringRegisterableItemsFactory;
 import pl.mrasoft.springboottest.jbmp.spring.ApplicationContextProvider;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
 
 @Configuration
 public class JbpmConfiguration {
@@ -36,6 +44,12 @@ public class JbpmConfiguration {
     @Bean
     @ConfigurationProperties(prefix = "datasource.jbpm")
     public DataSource jbpmDataSource() {
+        return DataSourceBuilder.create().build();
+    }
+
+    @Bean
+    @ConfigurationProperties(prefix = "datasource.quartz")
+    public DataSource quartzDataSource() {
         return DataSourceBuilder.create().build();
     }
 
@@ -82,9 +96,11 @@ public class JbpmConfiguration {
             @Qualifier("jbpmEntityManager") EntityManager em,
             @Qualifier("jbpmTransactionManager") PlatformTransactionManager transactionManager,
             @Qualifier("processClassPathResource") Resource resource,
-            SpringRegisterableItemsFactory registerableItemsFactory) throws Exception {
+            SpringRegisterableItemsFactory registerableItemsFactory,
+            GlobalSchedulerService quartzSchedulerService) throws Exception {
 
         RuntimeEnvironmentFactoryBean factory = new RuntimeEnvironmentFactoryBean();
+        factory.setSchedulerService(quartzSchedulerService);
         factory.setType(RuntimeEnvironmentFactoryBean.TYPE_DEFAULT);
         factory.setEntityManagerFactory(emf);
         factory.setEntityManager(em);
@@ -105,6 +121,35 @@ public class JbpmConfiguration {
         factory.setRuntimeEnvironment(runtimeEnvironment);
         factory.setType("PER_REQUEST");
         return (RuntimeManager) factory.getObject();
+    }
+
+    @Bean(destroyMethod = "shutdown")
+    public GlobalSchedulerService quartzSchedulerService(Scheduler scheduler) throws Exception {
+        SpringQuartzSchedulerService quartzSchedulerService = new SpringQuartzSchedulerService();
+        quartzSchedulerService.setQuartzScheduler(scheduler);
+
+        return quartzSchedulerService;
+    }
+
+    @Bean
+    public SchedulerFactoryBean schedulerFactoryBean(
+            @Qualifier("quartzDataSource") DataSource dataSource) throws IOException {
+        SchedulerFactoryBean factory = new SchedulerFactoryBean();
+        // this allows to update triggers in DB when updating settings in config file:
+        factory.setOverwriteExistingJobs(true);
+        factory.setDataSource(dataSource);
+
+        factory.setQuartzProperties(quartzProperties());
+
+        return factory;
+    }
+
+    @Bean
+    public Properties quartzProperties() throws IOException {
+        PropertiesFactoryBean propertiesFactoryBean = new PropertiesFactoryBean();
+        propertiesFactoryBean.setLocation(new ClassPathResource("/quartz.properties"));
+        propertiesFactoryBean.afterPropertiesSet();
+        return propertiesFactoryBean.getObject();
     }
 
 

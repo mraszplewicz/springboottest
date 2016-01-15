@@ -1,9 +1,18 @@
 package pl.mrasoft.springboottest.jbmp.internal;
 
-import org.jbpm.executor.impl.*;
+
+import org.jbpm.executor.impl.AvailableJobsExecutor;
+import org.jbpm.executor.impl.ClassCacheManager;
+import org.jbpm.executor.impl.ExecutorImpl;
+import org.jbpm.executor.impl.ExecutorRunnable;
+import org.jbpm.executor.impl.ExecutorServiceImpl;
 import org.jbpm.executor.impl.jpa.ExecutorQueryServiceImpl;
 import org.jbpm.executor.impl.jpa.ExecutorRequestAdminServiceImpl;
-import org.kie.internal.executor.api.*;
+import org.kie.api.executor.ExecutorAdminService;
+import org.kie.api.executor.ExecutorQueryService;
+import org.kie.api.executor.ExecutorService;
+import org.kie.api.executor.ExecutorStoreService;
+import org.kie.internal.executor.api.Executor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.support.AbstractPlatformTransactionManager;
@@ -62,7 +71,6 @@ public class SpringExecutorServiceFactory {
         return service;
     }
 
-
     public static ExecutorRunnable buildRunable(EntityManager em, AbstractPlatformTransactionManager transactionManager) {
         ExecutorRunnable runnable = new ExecutorRunnable();
         AvailableJobsExecutor jobExecutor = null;
@@ -92,4 +100,25 @@ public class SpringExecutorServiceFactory {
 
         return jobExecutor;
     }
+
+//    public static ExecutorRunnable buildRunable() {
+//        ExecutorRunnable runnable = new ExecutorRunnable();
+//        AvailableJobsExecutor jobExecutor = null;
+//        try {
+//            jobExecutor = InitialContext.doLookup("java:module/AvailableJobsExecutor");
+//        } catch (Exception e) {
+//            jobExecutor = new AvailableJobsExecutor();
+//            ClassCacheManager classCacheManager = new ClassCacheManager();
+//
+//            InMemoryExecutorStoreService storeService = new InMemoryExecutorStoreService(true);
+//            InMemoryExecutorQueryServiceImpl queryService = new InMemoryExecutorQueryServiceImpl(true);
+//            queryService.setStoreService(storeService);
+//
+//            jobExecutor.setClassCacheManager(classCacheManager);
+//            jobExecutor.setQueryService(queryService);
+//            jobExecutor.setExecutorStoreService(storeService);
+//        }
+//        runnable.setAvailableJobsExecutor(jobExecutor);
+//        return runnable;
+//    }
 }

@@ -10,7 +10,9 @@ buildscript {
 apply plugin: 'war'
 apply plugin: 'spring-boot'
 
-mainClassName = "pl.mrasoft.springboottest.Application"
+bootRepackage {
+    mainClass = "pl.mrasoft.springboottest.Application"
+}
 
 configurations {
     compile.exclude module: "spring-boot-starter-undertow"

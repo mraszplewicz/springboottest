@@ -2,9 +2,9 @@ package pl.mrasoft.springboottest.jbmp.internal;
 
 
 import org.jbpm.runtime.manager.impl.DefaultRegisterableItemsFactory;
+import org.kie.api.executor.ExecutorService;
 import org.kie.api.runtime.manager.RuntimeEngine;
 import org.kie.api.runtime.process.WorkItemHandler;
-import org.kie.internal.executor.api.ExecutorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

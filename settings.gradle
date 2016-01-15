@@ -1,1 +1,1 @@
-include "controllers", "services", "model", "repositories", "tomcatwar", "common:hibernate", "common:liquibase", "client", "processes"
+include "controllers", "services", "model", "repositories", "tomcatwar", "common:hibernate", "common:liquibase", "processes"
