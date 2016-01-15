@@ -2,11 +2,11 @@ package pl.mrasoft.springboottest.jbmp.internal;
 
 import org.drools.core.command.CommandService;
 import org.drools.core.command.impl.GenericCommand;
+import org.kie.api.executor.ErrorInfo;
+import org.kie.api.executor.ExecutorStoreService;
+import org.kie.api.executor.RequestInfo;
+import org.kie.api.executor.STATUS;
 import org.kie.internal.command.Context;
-import org.kie.internal.executor.api.ErrorInfo;
-import org.kie.internal.executor.api.ExecutorStoreService;
-import org.kie.internal.executor.api.RequestInfo;
-import org.kie.internal.executor.api.STATUS;
 import org.springframework.transaction.support.AbstractPlatformTransactionManager;
 
 import javax.persistence.EntityManager;
@@ -120,5 +120,4 @@ public class SpringJPAExecutorStoreService implements ExecutorStoreService {
         }
 
     }
-
 }

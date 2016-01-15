@@ -66,4 +66,5 @@ public class SpringTransactionalCommandService implements CommandService {
             throw new RuntimeException("Could not commit session or rollback", t2);
         }
     }
+
 }

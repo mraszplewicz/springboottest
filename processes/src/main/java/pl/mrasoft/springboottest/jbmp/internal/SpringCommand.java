@@ -1,8 +1,8 @@
 package pl.mrasoft.springboottest.jbmp.internal;
 
-import org.kie.internal.executor.api.Command;
-import org.kie.internal.executor.api.CommandContext;
-import org.kie.internal.executor.api.ExecutionResults;
+import org.kie.api.executor.Command;
+import org.kie.api.executor.CommandContext;
+import org.kie.api.executor.ExecutionResults;
 import pl.mrasoft.springboottest.jbmp.spring.ApplicationContextProvider;
 
 public class SpringCommand implements Command {

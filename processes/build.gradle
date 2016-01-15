@@ -13,10 +13,9 @@ dependencies {
     compile("org.kie:kie-spring:$jbpm_version")
     compile("org.jbpm:jbpm-executor:$jbpm_version")
     compile("org.jbpm:jbpm-shared-services:$jbpm_version")
-
-//    compile("org.codehaus.btm:btm:$bitronix_version")
-
-//    compile("org.kie:kie-api:$jbpm_version")
+    compile("org.quartz-scheduler:quartz:$quartz_version")
+    compile("org.springframework:spring-context-support:$spring_version")
+    compile("org.jboss.spec.javax.jms:jboss-jms-api_1.1_spec:$jboss_jms_api_version")
 }
 
 configurations {

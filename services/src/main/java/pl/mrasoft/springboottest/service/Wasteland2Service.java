@@ -1,12 +1,5 @@
 package pl.mrasoft.springboottest.service;
 
-import org.jbpm.executor.ExecutorServiceFactory;
-import org.jbpm.executor.impl.wih.AsyncWorkItemHandler;
-import org.kie.api.runtime.KieSession;
-import org.kie.api.runtime.manager.RuntimeEngine;
-import org.kie.api.runtime.manager.RuntimeManager;
-import org.kie.internal.executor.api.ExecutorService;
-import org.kie.internal.runtime.manager.context.EmptyContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import pl.mrasoft.springboottest.jbmp.ProcessService;
